@@ -1,0 +1,45 @@
+{
+  "name": "b-spline-algorithms",
+  "version": "0.0.1",
+  "description": "A comprehensive TypeScript library for B-spline and NURBS algorithms, offering both functional and optimized implementations.",
+  "main": "src/index.ts",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "tsc && jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericdemers/b-spline-algorithms.git"
+  },
+  "keywords": [
+    "b-spline",
+    "nurbs",
+    "spline",
+    "curve",
+    "surface",
+    "geometry",
+    "cad",
+    "computer-aided-design",
+    "de Boor",
+    "typescript"
+  ],
+  "author": "Eric Demers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ericdemers/b-spline-algorithms/issues"
+  },
+  "homepage": "https://github.com/ericdemers/b-spline-algorithms#readme",
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.26.0",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.3"
+  }
+}
