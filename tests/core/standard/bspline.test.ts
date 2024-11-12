@@ -1,6 +1,6 @@
 //import { describe, it, expect, beforeEach } from 'vitest';
 import { BSpline } from '../../../src/core/standard/bspline';
-import { Complex, ComplexVector2DSpace, Vector2D, Vector2DSpace } from '../../../src/core/standard/vector-space';
+import { Complex, ComplexVector2DSpace, Vector2D, Vector2DSpace, VectorSpace } from '../../../src/core/standard/vector-space';
 import { ControlPolygonCurve } from '../../../src/core/standard/control-net';
 import { Knots } from '../../../src/core/standard/knot-structure';
 
@@ -187,3 +187,4 @@ describe('BSpline', () => {
         });
     });
 });
+

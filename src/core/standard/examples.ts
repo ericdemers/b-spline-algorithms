@@ -3,7 +3,7 @@
 import { BSpline} from "./bspline"
 import { ControlNet, ControlPolygonCurve } from "./control-net"
 import { Knots, KnotStructure } from "./knot-structure"
-import { Complex, ComplexVector2D, Real, Vector, Vector1D, Vector2D, Vector3D, VectorSpace } from "./vector-space"
+import { Complex, ComplexVector2D, ComplexVector2DSpace, Real, Vector, Vector1D, Vector2D, Vector2DSpace, Vector3D, Vector3DSpace, VectorSpace } from "./vector-space"
 
 
 
@@ -76,83 +76,8 @@ class ControlNetVolume<V extends Vector> implements ControlNet<V> {
 }
 
 
-class RealVectorSpace1D implements VectorSpace<Real, Vector1D> {
-    zero(): Vector1D {
-        return [0];
-    }
 
-    add(a: Vector1D, b: Vector1D): Vector1D {
-        return [a[0] + b[0]];
-    }
 
-    scale(scalar: Real, v: Vector1D): Vector1D {
-        return [scalar * v[0]];
-    }
-
-    dimension() {
-        return 1
-    }
-}
-
-class RealVectorSpace2D implements VectorSpace<Real, Vector2D> {
-    zero(): Vector2D {
-        return [0, 0];
-    }
-
-    add(a: Vector2D, b: Vector2D): Vector2D {
-        return [a[0] + b[0], a[1] + b[1]];
-    }
-
-    scale(scalar: Real, v: Vector2D): Vector2D {
-        return [scalar * v[0], scalar * v[1]];
-    }
-
-    dimension() {
-        return 2
-    }
-}
-
-class RealVectorSpace3D implements VectorSpace<Real, Vector3D> {
-    zero(): Vector3D {
-        return [0, 0, 0];
-    }
-
-    add(a: Vector3D, b: Vector3D): Vector3D {
-        return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-    }
-
-    scale(scalar: Real, v: Vector3D): Vector3D {
-        return [scalar * v[0], scalar * v[1], scalar * v[2]];
-    }
-
-    dimension() {
-        return 3
-    }
-}
-
-class ComplexVectorSpace2D implements VectorSpace<Complex, ComplexVector2D> {
-    zero(): ComplexVector2D {
-        return [[0, 0], [0, 0]];
-    }
-
-    add(a: ComplexVector2D, b: ComplexVector2D): ComplexVector2D {
-        return [
-            [a[0][0] + b[0][0], a[0][1] + b[0][1]],
-            [a[1][0] + b[1][0], a[1][1] + b[1][1]]
-        ];
-    }
-
-    scale(scalar: Complex, v: ComplexVector2D): ComplexVector2D {
-        return [
-            [scalar[0] * v[0][0] - scalar[1]*v[0][1], scalar[0] * v[0][1] + scalar[1] * v[0][0]],
-            [scalar[0] * v[1][0] - scalar[1]*v[1][1], scalar[0] * v[1][1] + scalar[1] * v[1][0]]
-        ];
-    }
-
-    dimension() {
-        return 2
-    }
-}
 
 // 1. Simple 2D curve with real coordinates
 const curve2DReal = () => {
@@ -174,7 +99,7 @@ const curve2DReal = () => {
     const knotStructure = new Knots(knots);
 
     // Create vector space
-    const vectorSpace = new RealVectorSpace2D();
+    const vectorSpace = new Vector2DSpace();
 
     // Create B-spline (cubic degree)
     const bspline = new BSpline(
@@ -206,7 +131,7 @@ const curve2DComplex = () => {
     ];
 
     // Create complex vector space
-    const vectorSpace = new ComplexVectorSpace2D();
+    const vectorSpace = new ComplexVector2DSpace();
 
     // Create control net and knot structure
     const controlNet = new ControlPolygonCurve(controlPoints);
@@ -244,7 +169,7 @@ const surface3DReal = () => {
     ]);
 
     // Create vector space
-    const vectorSpace = new RealVectorSpace3D();
+    const vectorSpace = new Vector3DSpace();
 
     // Create B-spline surface
     const bspline = new BSpline(
@@ -293,7 +218,7 @@ const volume3DReal = () => {
 
     // Create B-spline volume
     const bspline = new BSpline(
-        new RealVectorSpace3D(),
+        new Vector3DSpace(),
         controlNet,
         knotStructure,
         [2, 2, 2] // quadratic in all directions

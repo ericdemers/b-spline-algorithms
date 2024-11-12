@@ -1,5 +1,5 @@
-import { ControlNet } from "./control-net";
-import { KnotStructure } from "./knot-structure";
+import { ControlNet, ControlPolygonCurve } from "./control-net";
+import { KnotStructure, ProductKnots } from "./knot-structure";
 import { Complex, Scalar, Vector, VectorSpace } from "./vector-space";
 
 // ------------ B-spline Implementation ------------
@@ -28,6 +28,20 @@ export class BSpline<K extends Scalar, V extends Vector> {
     ) {
         this.validateConstructorParams();
     }
+
+    public getKnots() {
+        return this.knots
+    }
+
+    public getDegrees() {
+        return this.degrees
+    }
+
+    public getControlNet() {
+        return this.controlNet
+    }
+
+
 
     /**
      * Evaluates the B-spline at given parameters using de Boor's algorithm
@@ -416,6 +430,26 @@ export class BSpline<K extends Scalar, V extends Vector> {
     }
 
     
+    /**
+     * Helper method to get all control points in current (first) dimension
+     * Returns a flattened array of control points for the current parametric dimension
+     * 
+     * @returns Array of control points
+     */
+    public getAllControlPoints(): V[] {
+        const indices = new Array(this.controlNet.getDimension()).fill(0);
+        const points: V[] = [];
+        
+        const size = this.controlNet.getSize(0);
+        for (let i = 0; i < size; i++) {
+            indices[0] = i;
+            points.push(this.controlNet.getPoint(indices));
+        }
+        
+        return points;
+    }
+    
+
 
 
 }

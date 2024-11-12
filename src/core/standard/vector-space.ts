@@ -42,7 +42,7 @@ export interface VectorSpace<K extends Scalar, V extends Vector> {
     scale(scalar: K, v: V): V;
     
     /** Vector subtraction (derived operation) */
-    subtract?(a: V, b: V): V;
+    subtract(a: V, b: V): V;
     
     /** Dimension of the vector space */
     dimension(): number;
@@ -105,6 +105,10 @@ export class Vector1DSpace implements VectorSpace<Real, Vector1D> {
         return [scalar * v[0]];
     }
 
+    subtract(a: Vector1D, b: Vector1D): Vector1D {
+        return [a[0] - b[0]];
+    }
+
     dimension() {
         return 1
     }
@@ -123,6 +127,10 @@ export class Vector2DSpace implements VectorSpace<Real, Vector2D> {
         return [scalar * v[0], scalar * v[1]];
     }
 
+    subtract(a: Vector2D, b: Vector2D): Vector2D {
+        return [a[0] - b[0], a[1] - b[1]];
+    }
+
     dimension() {
         return 2
     }
@@ -139,6 +147,10 @@ export class Vector3DSpace implements VectorSpace<Real, Vector3D> {
 
     scale(scalar: Real, v: Vector3D): Vector3D {
         return [scalar * v[0], scalar * v[1], scalar * v[2]];
+    }
+
+    subtract(a: Vector3D, b: Vector3D): Vector3D {
+        return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
     }
 
     dimension() {
@@ -162,6 +174,13 @@ export class ComplexVector2DSpace implements VectorSpace<Complex, ComplexVector2
         return [
             [scalar[0] * v[0][0] - scalar[1]*v[0][1], scalar[0] * v[0][1] + scalar[1] * v[0][0]],
             [scalar[0] * v[1][0] - scalar[1]*v[1][1], scalar[0] * v[1][1] + scalar[1] * v[1][0]]
+        ];
+    }
+
+    subtract(a: ComplexVector2D, b: ComplexVector2D): ComplexVector2D {
+        return [
+            [a[0][0] - b[0][0], a[0][1] - b[0][1]],
+            [a[1][0] - b[1][0], a[1][1] - b[1][1]]
         ];
     }
 
