@@ -57,6 +57,7 @@ export class Knots {
             return this.degree;
         }
 
+
     /**
      * Gets the knot value at the specified index, handling periodic cases.
      * For periodic knots, implements the formula: u[i + k] = u[i] + T
@@ -309,7 +310,6 @@ export class Knots {
     }
     
 
-    // ... other knot-related methods
     /**
      * Checks if the knot vector is periodic.
      * 
@@ -500,6 +500,50 @@ export function extendPeriodicArray(
     
     return result;
 }
+
+
+/**
+ * Represents a periodic knot sequence defined by a repeating pattern and a period length.
+ * 
+ * @interface PeriodicKnots
+ * @property {number[]} pattern - The base sequence of knot values that repeats
+ * @property {number} period - The length of one complete period (the spacing between repetitions)
+ * 
+ * @example
+ * // For sequence [-5, -3, -2, 0, 1, 3, 4, 6, 7, 9, ...]
+ * const knots: PeriodicKnots = {
+ *     pattern: [1, 3],  // Base pattern
+ *     period: 3         // Each repetition adds 3
+ * };
+ */
+export interface PeriodicKnots {
+    pattern: number[];    
+    period: number;      
+}
+
+/**
+ * Calculates the knot value at a given index in a periodic knot sequence.
+ * 
+ * @param {PeriodicKnots} knots - The periodic knot sequence definition
+ * @param {number} index - The index at which to calculate the knot value
+ * @returns {number} The knot value at the specified index
+ * @throws {Error} If the pattern array is empty
+ */
+
+export function getKnotValue(knots: PeriodicKnots, index: number): number {
+    const { pattern, period } = knots;
+    
+    if (pattern.length === 0) {
+        throw new Error('Pattern array cannot be empty');
+    }
+
+    const baseIndex = ((index % pattern.length) + pattern.length) % pattern.length;
+    const numPeriods = Math.floor(index / pattern.length);
+    
+    return pattern[baseIndex] + numPeriods * period;
+}
+
+
 
 
 

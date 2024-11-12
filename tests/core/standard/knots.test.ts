@@ -1,4 +1,4 @@
-import { extendPeriodicArray, Knots } from '../../../src/core/standard/knots';
+import { extendPeriodicArray, getKnotValue, Knots, PeriodicKnots } from '../../../src/core/standard/knots';
 
 describe('Knots', () => {
     // Test data
@@ -446,6 +446,107 @@ describe('extendPeriodicArray', () => {
     });
     
 });
+
+describe('getKnotValue', () => {
+    test('should handle basic periodic sequence', () => {
+        const knots: PeriodicKnots = {
+            pattern: [1, 3],
+            period: 3
+        };
+        
+        expect(getKnotValue(knots, 0)).toBe(1);  // First pattern value
+        expect(getKnotValue(knots, 1)).toBe(3);  // Second pattern value
+        expect(getKnotValue(knots, 2)).toBe(4);  // First value + period
+        expect(getKnotValue(knots, 3)).toBe(6);  // Second value + period
+        expect(getKnotValue(knots, 4)).toBe(7);  // First value + 2*period
+        expect(getKnotValue(knots, 5)).toBe(9);  // Second value + 2*period
+    });
+
+    test('should handle single value pattern', () => {
+        const knots: PeriodicKnots = {
+            pattern: [2],
+            period: 3
+        };
+        
+        expect(getKnotValue(knots, 0)).toBe(2);
+        expect(getKnotValue(knots, 1)).toBe(5);
+        expect(getKnotValue(knots, 2)).toBe(8);
+        expect(getKnotValue(knots, 3)).toBe(11);
+    });
+
+    test('should handle zero period', () => {
+        const knots: PeriodicKnots = {
+            pattern: [1, 2, 3],
+            period: 0
+        };
+        
+        expect(getKnotValue(knots, 0)).toBe(1);
+        expect(getKnotValue(knots, 1)).toBe(2);
+        expect(getKnotValue(knots, 2)).toBe(3);
+        expect(getKnotValue(knots, 3)).toBe(1);
+        expect(getKnotValue(knots, 4)).toBe(2);
+    });
+
+    test('should handle negative period', () => {
+        const knots: PeriodicKnots = {
+            pattern: [1, 3],
+            period: -2
+        };
+        
+        expect(getKnotValue(knots, 0)).toBe(1);
+        expect(getKnotValue(knots, 1)).toBe(3);
+        expect(getKnotValue(knots, 2)).toBe(-1);  // 1 - 2
+        expect(getKnotValue(knots, 3)).toBe(1);   // 3 - 2
+        expect(getKnotValue(knots, 4)).toBe(-3);  // 1 - 4
+    });
+
+    test('should handle negative indices', () => {
+        const knots: PeriodicKnots = {
+            pattern: [1, 3],
+            period: 3
+        };
+        
+        expect(getKnotValue(knots, -1)).toBe(0);  // Second value - period
+        expect(getKnotValue(knots, -2)).toBe(-2);  // First value - period
+        expect(getKnotValue(knots, -3)).toBe(-3);  // Second value - 2*period
+        expect(getKnotValue(knots, -4)).toBe(-5); // First value - 2*period
+    });
+
+    test('should handle floating point values', () => {
+        const knots: PeriodicKnots = {
+            pattern: [1.5, 2.7],
+            period: 0.5
+        };
+        
+        expect(getKnotValue(knots, 0)).toBeCloseTo(1.5);
+        expect(getKnotValue(knots, 1)).toBeCloseTo(2.7);
+        expect(getKnotValue(knots, 2)).toBeCloseTo(2.0);  // 1.5 + 0.5
+        expect(getKnotValue(knots, 3)).toBeCloseTo(3.2);  // 2.7 + 0.5
+    });
+
+    test('should handle longer patterns', () => {
+        const knots: PeriodicKnots = {
+            pattern: [1, 2, 3, 4, 5],
+            period: 10
+        };
+        
+        expect(getKnotValue(knots, 0)).toBe(1);
+        expect(getKnotValue(knots, 4)).toBe(5);
+        expect(getKnotValue(knots, 5)).toBe(11);  // 1 + 10
+        expect(getKnotValue(knots, 9)).toBe(15);  // 5 + 10
+        expect(getKnotValue(knots, 10)).toBe(21); // 1 + 20
+    });
+
+    test('should throw error for empty pattern', () => {
+        const knots: PeriodicKnots = {
+            pattern: [],
+            period: 3
+        };
+        
+        expect(() => getKnotValue(knots, 0)).toThrow();
+    });
+});
+
 
  
 
