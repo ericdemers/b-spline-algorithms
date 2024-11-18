@@ -543,6 +543,9 @@ export function getKnotValue(knots: PeriodicKnots, index: number): number {
     return pattern[baseIndex] + numPeriods * period;
 }
 
+//note :
+// The number of periodic knot inside a period should be the number of periodic control point
+
 
 
 
