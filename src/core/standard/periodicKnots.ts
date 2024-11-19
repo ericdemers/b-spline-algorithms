@@ -1,4 +1,4 @@
-import { BaseKnotStructure, KnotStructure, Domain, KnotValue } from './knot-structure';
+import { BaseKnotStructure, KnotStructure, Domain, KnotValue } from './knotStructure';
 
 /**
  * Interface for distinct knots with multiplicities

@@ -1,8 +1,8 @@
 import { BSpline } from './bspline';
 import { RealVectorSpace, Vector2D, VectorSpace } from "./vector-space";
 import { PeriodicKnots } from './periodicKnots';
-import { ControlNet } from './control-net';
-import { KnotValue } from './knot-structure';
+import { ControlNet } from './controlNet';
+import { KnotValue } from './knotStructure';
 
 /**
  * Vector space implementation for 2D vectors

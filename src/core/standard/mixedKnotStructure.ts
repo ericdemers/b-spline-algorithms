@@ -1,6 +1,6 @@
-import { BaseKnotStructure, Domain, KnotStructure, KnotValue } from './knot-structure';
+import { BaseKnotStructure, Domain, KnotStructure, KnotValue } from './knotStructure';
 import { PeriodicKnots } from './periodicKnots';
-import { Knots } from './knot-structure';
+import { Knots } from './knotStructure';
 
 /**
  * Enum to specify the type of knot sequence in each dimension

@@ -16,7 +16,7 @@ export interface ControlNet<V extends Vector> {
 }
 
 
-export class ControlPolygonCurve<V extends Vector> implements ControlNet<V> {
+export class ControlPolygon<V extends Vector> implements ControlNet<V> {
     
     constructor(private readonly controlPoints: ReadonlyArray<V>,
                 private readonly weights?: ReadonlyArray<V> ) {}

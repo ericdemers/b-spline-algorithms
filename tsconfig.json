@@ -8,7 +8,9 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./build",
     "rootDir": "./src",
-    "types": ["jest"]
+    "types": ["jest"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.test.ts"]

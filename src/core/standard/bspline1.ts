@@ -1,4 +1,4 @@
-import { ControlNet, ControlPolygonCurve } from "./control-net";
+import { ControlNet, ControlPolygon } from "./controlNet";
 import { KnotStructure, ProductKnots } from "./knot-structure2";
 import { Complex, Scalar, Vector, VectorSpace } from "./vector-space";
 

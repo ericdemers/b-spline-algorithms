@@ -1,7 +1,7 @@
 // ------------ Basic Examples ------------
 
 import { BSpline} from "./bspline1"
-import { ControlNet, ControlPolygonCurve } from "./control-net"
+import { ControlNet, ControlPolygon } from "./controlNet"
 import { Knots, KnotStructure } from "./knot-structure2"
 import { Complex, ComplexVector2D, ComplexVector2DSpace, Real, Vector, Vector1D, Vector2D, Vector2DSpace, Vector3D, Vector3DSpace, VectorSpace } from "./vector-space"
 
@@ -93,7 +93,7 @@ const curve2DReal = () => {
     const knots = [0, 0, 0, 0, 1, 1, 1, 1];
 
     // Create control net
-    const controlNet = new ControlPolygonCurve(controlPoints);
+    const controlNet = new ControlPolygon(controlPoints);
 
     // Create knot structure
     const knotStructure = new Knots(knots);
@@ -134,7 +134,7 @@ const curve2DComplex = () => {
     const vectorSpace = new ComplexVector2DSpace();
 
     // Create control net and knot structure
-    const controlNet = new ControlPolygonCurve(controlPoints);
+    const controlNet = new ControlPolygon(controlPoints);
     const knotStructure = new Knots([0, 0, 0, 0, 1, 1, 1, 1]);
 
     // Create B-spline

@@ -1,5 +1,5 @@
-import { ControlNet } from "./control-net";
-import { KnotStructure } from "./knot-structure2";
+import { ControlNet } from "./controlNet";
+import { KnotStructure } from "./knotStructure";
 import { Scalar, Vector, VectorSpace } from "./vector-space";
 
 /**

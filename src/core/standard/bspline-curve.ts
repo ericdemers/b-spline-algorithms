@@ -1,14 +1,17 @@
 import { Vector, VectorSpace } from "./vector-space";
+import { BSpline } from "./bspline";
+import { ControlPolygon } from "./controlNet";
+import { Knots } from "./knotStructure";
 
 /**
  * Implementation of a B-spline curve
  * Represents a parametric curve defined by control points, knot vector, and degree
  */
-export class BSplineCurve<K extends number, V extends Vector> {
-    private readonly vectorSpace: VectorSpace<K, V>;
-    private readonly controlPoints: V[];
-    private readonly knots: number[];
-    private readonly degree: number;
+export class BSplineCurve<K extends number, V extends Vector> extends BSpline<K, V> {
+    //private readonly vectorSpace: VectorSpace<K, V>;
+    //private readonly controlPoints: V[];
+    //private readonly knots: number[];
+    //private readonly degree: number;
 
     /**
      * Constructs a new B-spline curve
@@ -24,12 +27,20 @@ export class BSplineCurve<K extends number, V extends Vector> {
         knots: number[],
         degree: number
     ) {
+        /*
         this.vectorSpace = vectorSpace;
         this.controlPoints = [...controlPoints];
         this.knots = [...knots];
         this.degree = degree;
-
         this.validateConstructorParams();
+        */
+        // Convert to general form
+        super(
+            vectorSpace,
+            new ControlPolygon(controlPoints),
+            new Knots(knots ?? generateUniformKnots(controlPoints.length, degree)),
+            [degree]
+        );
     }
 
     /**
