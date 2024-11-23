@@ -296,3 +296,108 @@ export class BSplineCurve<K extends number, V extends Vector> extends BSpline<K,
     }
 }
 
+
+//////////////////////////////////////
+
+// Base abstract class for all curves
+abstract class AbstractBSplineCurve<K extends Scalar, V extends Vector> extends BSpline<K, V> {
+    // Common functionality for all curves
+    abstract evaluate(t: number): V;
+    abstract derivative(order?: number): AbstractBSplineCurve<K, V>;
+}
+
+// For open curves (your current BSplineCurve)
+class OpenBSplineCurve<K extends Scalar, V extends Vector> extends AbstractBSplineCurve<K, V> {
+    constructor(
+        vectorSpace: VectorSpace<K, V>,
+        controlPoints: ReadonlyArray<V>,
+        degree: number,
+        knots?: ReadonlyArray<number>
+    ) {
+        super(
+            vectorSpace,
+            new ControlPointArray(controlPoints),
+            new UnivariateKnots(knots ?? generateUniformKnots(controlPoints.length, degree)),
+            [degree]
+        );
+    }
+}
+
+// For periodic curves
+class PeriodicBSplineCurve<K extends Scalar, V extends Vector> extends AbstractBSplineCurve<K, V> {
+    constructor(
+        vectorSpace: VectorSpace<K, V>,
+        controlPoints: ReadonlyArray<V>,
+        degree: number,
+        pattern: ReadonlyArray<number>,
+        period: number
+    ) {
+        super(
+            vectorSpace,
+            new PeriodicControlPoints(controlPoints),  // Might need special handling
+            new PeriodicKnots(pattern, period),
+            [degree]
+        );
+    }
+
+    // Additional methods specific to periodic curves
+    getPeriod(): number;
+    getWrappedParameter(t: number): number;
+}
+
+// Factory methods for easy creation
+class BSplineCurveFactory {
+    static createOpen<K extends Scalar, V extends Vector>(
+        vectorSpace: VectorSpace<K, V>,
+        controlPoints: ReadonlyArray<V>,
+        degree: number,
+        knots?: ReadonlyArray<number>
+    ): OpenBSplineCurve<K, V>;
+
+    static createPeriodic<K extends Scalar, V extends Vector>(
+        vectorSpace: VectorSpace<K, V>,
+        controlPoints: ReadonlyArray<V>,
+        degree: number,
+        pattern: ReadonlyArray<number>,
+        period: number
+    ): PeriodicBSplineCurve<K, V>;
+
+    static createFromKnotStructure<K extends Scalar, V extends Vector>(
+        vectorSpace: VectorSpace<K, V>,
+        controlPoints: ReadonlyArray<V>,
+        degree: number,
+        knotStructure: KnotStructure
+    ): AbstractBSplineCurve<K, V>;
+}
+
+///////////////
+
+// Creating an open curve
+const openCurve = BSplineCurveFactory.createOpen(
+    vector2DSpace,
+    [[0,0], [1,1], [2,0]],
+    2
+);
+
+// Creating a periodic curve
+const periodicCurve = BSplineCurveFactory.createPeriodic(
+    vector2DSpace,
+    [[0,0], [1,1], [2,0]],
+    2,
+    [0, 0.25, 0.5, 0.75],
+    1.0
+);
+
+// Using mixed knot structure for surfaces
+const surface = new BSplineSurface(
+    vector3DSpace,
+    controlPoints,
+    [3, 3],
+    new MixedKnotStructure([
+        new UnivariateKnots([/* ... */]),
+        new PeriodicKnots([/* ... */], 1.0)
+    ])
+);
+
+
+
