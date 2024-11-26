@@ -6,6 +6,11 @@ export interface KnotValue {
     readonly multiplicity: number;
 }
 
+export interface DistinctKnotsWithMultiplicities {
+    readonly knots: ReadonlyArray<number>;
+    readonly multiplicities: ReadonlyArray<number>;
+}
+
 /**
  * Base interface for all knot structures
  */
@@ -26,13 +31,13 @@ export interface KnotStructure {
      * @param dimension - The dimension where to insert the knot
      * @param u - The knot value to insert
      */
-    withInsertedKnot(dimension: number, u: number): KnotStructure;
+    withInsertedKnot(u: number, dimension: number): KnotStructure;
 
     /**
      * Creates a new knot structure with removed knots
      * @param dimension - The dimension where to remove knots
      */
-    withRemovedKnots(dimension: number): KnotStructure;
+    withRemovedKnot(index: number, dimension: number): KnotStructure;
 
     /**
      * Gets the domain bounds for a specific direction
@@ -46,6 +51,7 @@ export interface KnotStructure {
      */
     getDistinctKnots(direction: number): ReadonlyArray<KnotValue>;
 }
+
 
 /**
  * Represents a domain interval
@@ -61,8 +67,8 @@ export interface Domain {
 export abstract class BaseKnotStructure implements KnotStructure {
     abstract getDimension(): number;
     abstract getKnotSequence(direction: number): ReadonlyArray<number>;
-    abstract withInsertedKnot(dimension: number, u: number): KnotStructure;
-    abstract withRemovedKnots(dimension: number): KnotStructure;
+    abstract withInsertedKnot(u: number, dimension: number): KnotStructure;
+    abstract withRemovedKnot(index: number, dimension: number): KnotStructure;
     abstract getDomain(direction: number): Domain;
     abstract getDistinctKnots(direction: number): ReadonlyArray<KnotValue>;
 
@@ -125,12 +131,12 @@ export class Knots extends BaseKnotStructure {
         return 1;
     }
 
-    getKnotSequence(direction: number): ReadonlyArray<number> {
+    getKnotSequence(direction: number = 0): ReadonlyArray<number> {
         this.validateDirection(direction);
         return this.knots;
     }
 
-    withInsertedKnot(dimension: number, u: number): KnotStructure {
+    withInsertedKnot(u: number, dimension: number = 0): KnotStructure {
         this.validateDirection(dimension);
         const insertIndex = this.findInsertionIndex(this.knots, u);
         const newKnots = [...this.knots];
@@ -138,13 +144,9 @@ export class Knots extends BaseKnotStructure {
         return new Knots(newKnots);
     }
 
-    withRemovedKnots(dimension: number): KnotStructure {
+    withRemovedKnot(index: number, dimension: number = 0): KnotStructure {
         this.validateDirection(dimension);
-        const newKnots = [
-            this.knots[0],
-            ...this.knots.slice(1, -1).filter((_, index) => index % 2 === 0),
-            this.knots[this.knots.length - 1]
-        ];
+        const newKnots = this.knots.filter((_, i) => i !== index);
         return new Knots(newKnots);
     }
 
@@ -200,7 +202,7 @@ export class ProductKnots extends BaseKnotStructure {
         return new ProductKnots(newKnotVectors);
     }
 
-    withRemovedKnots(dimension: number): KnotStructure {
+    withRemovedKnot(dimension: number): KnotStructure {
         this.validateDirection(dimension);
         const newKnotVectors = [...this.knotVectors];
         const knots = this.knotVectors[dimension];

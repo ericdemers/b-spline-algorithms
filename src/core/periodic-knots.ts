@@ -1,12 +1,39 @@
-import { BaseKnotStructure, KnotStructure, Domain, KnotValue } from './knotStructure';
+import { BaseKnotStructure, KnotStructure, Domain, KnotValue, Knots, DistinctKnotsWithMultiplicities } from './knot-structure';
+
+
+/**
+ * Converts an ordinary (open) knot sequence to a periodic (closed) 
+ * knot sequence.
+ *
+ * This function creates a periodic knot sequence by adjusting the 
+ * ordinary (open) knot sequence for seamless transitions between open 
+ * and closed curves. The adjustment ensures that the first control 
+ * point retains its influence at the curve junction.
+ *
+ * @param ordinaryKnots - The ordinary (open) knot sequence represented as a Knots object.
+ * @param degree - The degree of the B-spline.
+ * @returns A PeriodicKnots object representing the periodic knot sequence.
+ */
+export function convertToPeriodicKnotSequence(ordinaryKnots: Knots, degree: number): PeriodicKnots {
+    // Retrieve the knot sequence from the open B-spline
+    const knots = ordinaryKnots.getKnotSequence();
+
+    // Calculate the distance between the clamped knots at the end and the knot that comes before them
+    const distance = knots[knots.length - 2] - knots[knots.length - degree - 1];
+
+    // Construct the closed knot sequence adjusting the position of the first knot
+    const closedKnots = [knots[0] - distance, ...knots.slice(1, knots.length - degree - 1)];
+
+    // Return a new PeriodicKnots object with the constructed closed knot sequence
+    return new PeriodicKnots(closedKnots, degree);
+}
 
 /**
  * Interface for distinct knots with multiplicities
  */
-export interface DistinctKnotsWithMultiplicities {
-    readonly knots: ReadonlyArray<number>;
-    readonly multiplicities: ReadonlyArray<number>;
-}
+
+
+
 
 /**
  * Represents a periodic knot vector for closed B-spline curves.
@@ -26,6 +53,7 @@ export class PeriodicKnots extends BaseKnotStructure {
     constructor(
         private readonly pattern: ReadonlyArray<number>,
         private readonly period: number,
+        private readonly degree: number = pattern.length - 1
     ) {
         super();
         this.validateConstructorParams(pattern, period);
@@ -37,12 +65,24 @@ export class PeriodicKnots extends BaseKnotStructure {
         return 1;
     }
 
-    getKnotSequence(direction: number): ReadonlyArray<number> {
+
+    getKnotSequence(direction: number = 0): ReadonlyArray<number> {
         this.validateDirection(direction);
-        return this.unrollKnots(3); // Default to 3 periods
+        const knots: number[] = [];
+        // The total number of wrapped control points is the sum of the pattern length and the degree.
+        // This is because each control point is wrapped around the curve, and the degree determines how many control points are wrapped.
+        // The number of knots is the number of wrapped control points plus the degree plus one. 
+        for (let i = 0; i < this.pattern.length + 2 * this.degree + 1; i++) {
+            knots.push(this.getKnotValue(i)); // Use getKnotValue to handle periodicity
+        }
+        return knots;
     }
 
-    withInsertedKnot(dimension: number, u: number): KnotStructure {
+    public mapToPatternIndex(periodicIndex: number): number {
+        return periodicIndex % this.pattern.length;
+    }
+
+    withInsertedKnot(u: number, dimension: number = 0): PeriodicKnots {
         this.validateDirection(dimension);
         const normalizedU = this.normalizeParameter(u);
         const insertIndex = this.findInsertionIndex(this.pattern, normalizedU);
@@ -51,23 +91,19 @@ export class PeriodicKnots extends BaseKnotStructure {
         return new PeriodicKnots(newPattern, this.period);
     }
 
-    withRemovedKnots(dimension: number): KnotStructure {
+    withRemovedKnot(index: number, dimension: number = 0): PeriodicKnots {
         this.validateDirection(dimension);
-        // For periodic knots, maintain pattern structure while removing interior knots
-        const newPattern = [
-            this.pattern[0],
-            ...this.pattern.slice(1, -1).filter((_, index) => index % 2 === 0),
-            this.pattern[this.pattern.length - 1]
-        ];
+        const patternIndex = this.mapToPatternIndex(index);
+        const newPattern = this.pattern.filter((_, i) => i !== patternIndex)
         return new PeriodicKnots(newPattern, this.period);
     }
 
-    getDomain(direction: number): Domain {
+    getDomain(direction: number = 0): Domain {
         this.validateDirection(direction);
         return { ...this.domain };
     }
 
-    getDistinctKnots(direction: number): ReadonlyArray<KnotValue> {
+    getDistinctKnots(direction: number = 0): ReadonlyArray<KnotValue> {
         this.validateDirection(direction);
         return this.distinctKnotsCache;
     }

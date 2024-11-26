@@ -1,4 +1,5 @@
 import { Vector } from "./vector-space";
+import { adaptParameter } from '../utils/decorators';
 
 /**
  * Control net structure for B-spline definition
@@ -21,7 +22,9 @@ export class ControlPolygon<V extends Vector> implements ControlNet<V> {
     constructor(private readonly controlPoints: ReadonlyArray<V>,
                 private readonly weights?: ReadonlyArray<V> ) {}
 
-    getPoint(index: number[]): V {
+    @adaptParameter()
+    getPoint(position: number | number[]): V {
+        const index = position as number[]
         return this.controlPoints[index[0]]
     }
 
@@ -29,7 +32,8 @@ export class ControlPolygon<V extends Vector> implements ControlNet<V> {
         return 1
     }
 
-    getSize(direction: number) {
+    getSize(direction: number = 0) {
         return this.controlPoints.length
     }
 }
+

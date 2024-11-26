@@ -4,7 +4,7 @@
 // Export other functions and types as needed
 
 // src/index.ts
-export { BSplineCurve2D } from './curves/bspline';
-export { Vector2D } from './types';
-export type { CurveOptions } from './interfaces';
+//export { BSplineCurve2D } from './curves/bspline';
+//export { Vector2D } from './types';
+//export type { CurveOptions } from './interfaces';
 
