@@ -28,12 +28,6 @@ export function convertToPeriodicKnotSequence(ordinaryKnots: Knots, degree: numb
     return new PeriodicKnots(closedKnots, degree);
 }
 
-/**
- * Interface for distinct knots with multiplicities
- */
-
-
-
 
 /**
  * Represents a periodic knot vector for closed B-spline curves.

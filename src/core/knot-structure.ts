@@ -6,6 +6,10 @@ export interface KnotValue {
     readonly multiplicity: number;
 }
 
+/**
+ * Interface for distinct knots with multiplicities
+ */
+
 export interface DistinctKnotsWithMultiplicities {
     readonly knots: ReadonlyArray<number>;
     readonly multiplicities: ReadonlyArray<number>;
@@ -136,7 +140,7 @@ export class Knots extends BaseKnotStructure {
         return this.knots;
     }
 
-    withInsertedKnot(u: number, dimension: number = 0): KnotStructure {
+    withInsertedKnot(u: number, dimension: number = 0): Knots {
         this.validateDirection(dimension);
         const insertIndex = this.findInsertionIndex(this.knots, u);
         const newKnots = [...this.knots];
@@ -144,7 +148,7 @@ export class Knots extends BaseKnotStructure {
         return new Knots(newKnots);
     }
 
-    withRemovedKnot(index: number, dimension: number = 0): KnotStructure {
+    withRemovedKnot(index: number, dimension: number = 0): Knots {
         this.validateDirection(dimension);
         const newKnots = this.knots.filter((_, i) => i !== index);
         return new Knots(newKnots);
@@ -202,15 +206,11 @@ export class ProductKnots extends BaseKnotStructure {
         return new ProductKnots(newKnotVectors);
     }
 
-    withRemovedKnot(dimension: number): KnotStructure {
+    withRemovedKnot(index: number, dimension: number = 0): KnotStructure {
         this.validateDirection(dimension);
         const newKnotVectors = [...this.knotVectors];
         const knots = this.knotVectors[dimension];
-        const newKnots = [
-            knots[0],
-            ...knots.slice(1, -1).filter((_, index) => index % 2 === 0),
-            knots[knots.length - 1]
-        ];
+        const newKnots = knots.filter((_, i) => i !== index);
         newKnotVectors[dimension] = newKnots;
         return new ProductKnots(newKnotVectors);
     }
