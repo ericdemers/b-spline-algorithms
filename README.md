@@ -283,7 +283,7 @@ List any references, papers, or other libraries that inspired or informed your i
 
 ## Version History
 
-- 1.0.0
+- 0.0.1
   - Initial release
   - Basic B-spline functionality
   - Periodic curve support
